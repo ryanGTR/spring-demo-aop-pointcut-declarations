@@ -1,6 +1,8 @@
+
 package com.luv2code.aopdemo.aspect;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,7 +13,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.jboss.logging.Logger;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +40,18 @@ public class MyDemoLoggingAspect {
 		long begin = System.currentTimeMillis();
 		
 		// now, let's execute the method
-		Object result = theProceedingJoinPoint.proceed();
+		Object result = null;
+		
+		try {
+			result = theProceedingJoinPoint.proceed();
+		} catch (Exception e) {
+			// log the exception
+			myLogger.warning(e.getMessage());
+			
+			// giver user a custom message
+			result = "Major accident! But no worries, "
+					+ "your private AOP helicopter is on the way";
+		}
 		
 		// get end timestamp
 		long end = System.currentTimeMillis();
